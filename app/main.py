@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from app.config import settings
 
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
@@ -12,8 +13,10 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Include routers
+from app.api.v1.router import api_router
 from app.web.routes import router as web_router
 
+app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 app.include_router(web_router)
 
 
