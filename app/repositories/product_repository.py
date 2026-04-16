@@ -16,7 +16,7 @@ class ProductRepository:
         """Get product by ID with sizes"""
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .where(Product.id == product_id)
         )
         return result.scalar_one_or_none()
@@ -25,7 +25,7 @@ class ProductRepository:
         """Get product by slug with sizes"""
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .where(Product.slug == slug)
         )
         return result.scalar_one_or_none()
@@ -34,7 +34,7 @@ class ProductRepository:
         """Get all products with pagination"""
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .offset(skip)
             .limit(limit)
         )
@@ -46,7 +46,7 @@ class ProductRepository:
         """Get products by category"""
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .where(Product.category_id == category_id)
             .offset(skip)
             .limit(limit)
@@ -57,7 +57,7 @@ class ProductRepository:
         """Get all available products"""
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .where(Product.is_available == True)
             .offset(skip)
             .limit(limit)
@@ -71,7 +71,7 @@ class ProductRepository:
         search_pattern = f"%{query}%"
         result = await self.session.execute(
             select(Product)
-            .options(selectinload(Product.sizes))
+            .options(selectinload(Product.sizes), selectinload(Product.category))
             .where(
                 (Product.name.ilike(search_pattern))
                 | (Product.description.ilike(search_pattern))

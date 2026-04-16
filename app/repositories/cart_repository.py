@@ -4,6 +4,7 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models.cart import Cart, CartItem
+from app.models.product import ProductSize
 
 
 class CartRepository:
@@ -16,7 +17,11 @@ class CartRepository:
         """Get cart by ID with items"""
         result = await self.session.execute(
             select(Cart)
-            .options(selectinload(Cart.items).selectinload(CartItem.product_size))
+            .options(
+                selectinload(Cart.items)
+                .selectinload(CartItem.product_size)
+                .selectinload(ProductSize.product)
+            )
             .where(Cart.id == cart_id)
         )
         return result.scalar_one_or_none()
@@ -25,7 +30,11 @@ class CartRepository:
         """Get cart by user ID with items"""
         result = await self.session.execute(
             select(Cart)
-            .options(selectinload(Cart.items).selectinload(CartItem.product_size))
+            .options(
+                selectinload(Cart.items)
+                .selectinload(CartItem.product_size)
+                .selectinload(ProductSize.product)
+            )
             .where(Cart.user_id == user_id)
         )
         return result.scalar_one_or_none()
@@ -57,7 +66,9 @@ class CartRepository:
         """Get cart item by ID"""
         result = await self.session.execute(
             select(CartItem)
-            .options(selectinload(CartItem.product_size))
+            .options(
+                selectinload(CartItem.product_size).selectinload(ProductSize.product)
+            )
             .where(CartItem.id == item_id)
         )
         return result.scalar_one_or_none()

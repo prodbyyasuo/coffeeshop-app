@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Orders - Coffetime</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold">Orders</h1>
+            <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">ID</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Customer</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Ready</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Total</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for order in orders %}
+                    <tr>
+                        <td class="px-4 py-3">#{{ order.id }}</td>
+                        <td class="px-4 py-3">{{ order.customer_name }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ order.ready_time }}</td>
+                        <td class="px-4 py-3 text-gray-600">${{ "%.2f"|format(order.total_amount) }}</td>
+                        <td class="px-4 py-3">{{ order.status }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">No orders</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

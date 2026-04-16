@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -29,6 +30,28 @@ class OrderRepository:
             .limit(limit)
             .order_by(Order.created_at.desc())
         )
+        return list(result.scalars().all())
+
+    async def get_by_user_id(
+        self,
+        user_id: UUID,
+        skip: int = 0,
+        limit: int = 100,
+        status: str | None = None,
+    ) -> list[Order]:
+        """Get orders by user id"""
+        stmt = (
+            select(Order)
+            .options(selectinload(Order.items))
+            .where(Order.user_id == user_id)
+            .offset(skip)
+            .limit(limit)
+            .order_by(Order.created_at.desc())
+        )
+        if status:
+            stmt = stmt.where(Order.status == status)
+
+        result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
     async def get_by_status(

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from decimal import Decimal
+from uuid import UUID
 
 
 class OrderItemBase(BaseModel):
@@ -40,6 +41,7 @@ class OrderUpdate(BaseModel):
 
 class OrderResponse(OrderBase):
     id: int
+    user_id: UUID
     created_at: datetime
     updated_at: datetime
     items: list[OrderItemResponse] = []

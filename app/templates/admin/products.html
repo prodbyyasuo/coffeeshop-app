@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Products - Coffetime</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold">Products</h1>
+            <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Category</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Sizes</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for product in products %}
+                    <tr>
+                        <td class="px-4 py-3">{{ product.name }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ product.category.name if product.category else "-" }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ product.sizes|length }}</td>
+                        <td class="px-4 py-3">{{ "available" if product.is_available else "hidden" }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">No products</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
