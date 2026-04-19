@@ -769,32 +769,36 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 class="text-xl font-bold">Coffee Lover</h3>
-                                        <p class="text-gray-600">coffee@example.com</p>
+                                        {% if current_user %}
+                                        <h3 class="text-xl font-bold">{{ current_user.username }}</h3>
+                                        <p class="text-gray-600">{{ current_user.email }}</p>
+                                        {% else %}
+                                        <h3 class="text-xl font-bold">Guest</h3>
+                                        <p class="text-gray-600">Sign in to use cart and orders</p>
+                                        {% endif %}
                                     </div>
                                 </div>
+                                {% if current_user %}
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="/profile" class="rounded-xl bg-coffee-black px-3 py-2 text-sm font-medium text-white">Profile</a>
+                                    <a href="/orders" class="rounded-xl bg-white px-3 py-2 text-sm font-medium">My Orders</a>
+                                    {% if current_user.role.value == "admin" %}
+                                    <a href="/admin" class="rounded-xl bg-white px-3 py-2 text-sm font-medium">Admin</a>
+                                    {% endif %}
+                                    <form method="post" action="/logout" class="inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <button type="submit" class="rounded-xl bg-white px-3 py-2 text-sm font-medium">Logout</button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="/login" class="rounded-xl bg-coffee-black px-3 py-2 text-sm font-medium text-white">Login</a>
+                                    <a href="/register" class="rounded-xl bg-white px-3 py-2 text-sm font-medium">Register</a>
+                                </div>
+                                {% endif %}
                             </div>
 
-                            <div class="space-y-3 pb-24">
-                                <button class="w-full bg-coffee-gray rounded-2xl p-4 text-left flex items-center justify-between">
-                                    <span class="font-medium">Order History</span>
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </button>
-                                <button class="w-full bg-coffee-gray rounded-2xl p-4 text-left flex items-center justify-between">
-                                    <span class="font-medium">Favorites</span>
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </button>
-                                <button class="w-full bg-coffee-gray rounded-2xl p-4 text-left flex items-center justify-between">
-                                    <span class="font-medium">Settings</span>
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </button>
-                            </div>
+                            <div class="pb-24"></div>
                         </div>
                     </div>
                 </div>

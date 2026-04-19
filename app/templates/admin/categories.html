@@ -7,35 +7,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <div class="max-w-7xl mx-auto p-6">
-        <div class="flex items-center justify-between mb-6">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">Categories</h1>
             <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Slug</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for category in categories %}
-                    <tr>
-                        <td class="px-4 py-3">{{ category.name }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ category.slug }}</td>
-                        <td class="px-4 py-3">{{ "active" if category.is_active else "inactive" }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="3" class="px-4 py-8 text-center text-gray-500">No categories</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="font-semibold mb-3">Create category</h2>
+            <p class="mb-3 text-xs text-gray-500">Slug is generated automatically from name.</p>
+            <form method="post" action="/admin/categories/create" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input name="name" placeholder="Name" required class="md:col-span-2 border rounded px-3 py-2">
+                <input name="description" placeholder="Description" class="md:col-span-2 border rounded px-3 py-2">
+                <input name="image_url" placeholder="Image URL" class="md:col-span-1 border rounded px-3 py-2">
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" checked> active</label>
+                <button class="md:col-span-6 justify-self-start px-4 py-2 bg-black text-white rounded">Create</button>
+            </form>
+        </div>
+
+        <div class="space-y-3">
+            {% for category in categories %}
+            <form method="post" action="/admin/categories/{{ category.id }}/update" class="bg-white rounded-xl shadow p-4 grid grid-cols-1 md:grid-cols-8 gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input name="name" value="{{ category.name }}" required class="md:col-span-2 border rounded px-3 py-2">
+                <input name="description" value="{{ category.description or '' }}" class="md:col-span-2 border rounded px-3 py-2">
+                <input name="image_url" value="{{ category.image_url or '' }}" class="md:col-span-2 border rounded px-3 py-2">
+                <div class="text-xs text-gray-500 self-center">slug: {{ category.slug }}</div>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" {% if category.is_active %}checked{% endif %}> active</label>
+                <div class="flex gap-2">
+                    <button class="px-3 py-2 bg-black text-white rounded">Save</button>
+                    <button formaction="/admin/categories/{{ category.id }}/delete" formmethod="post" onclick="return confirm('Delete category?')" class="px-3 py-2 bg-red-600 text-white rounded">Delete</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">No categories</div>
+            {% endfor %}
         </div>
     </div>
 </body>

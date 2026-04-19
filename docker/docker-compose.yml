@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15-alpine
     container_name: coffee_shop_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-coffee_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coffee_pass_2026}
       POSTGRES_DB: ${POSTGRES_DB:-coffee_shop}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -15,7 +13,7 @@ services:
     networks:
       - coffee_shop_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-coffee_user}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,12 +24,13 @@ services:
       dockerfile: docker/Dockerfile
     container_name: coffee_shop_api
     environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-coffee_shop}
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-here}
-      SESSION_SECRET_KEY: ${SESSION_SECRET_KEY:-your-session-secret-key-here}
-      DEBUG: ${DEBUG:-False}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-coffee_user}:${POSTGRES_PASSWORD:-coffee_pass_2026}@db:5432/${POSTGRES_DB:-coffee_shop}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-coffee-shop-2026-change-in-production}
+      SESSION_SECRET_KEY: ${SESSION_SECRET_KEY:-dev-session-secret-key-coffee-shop-2026-change-in-production}
+      DEBUG: ${DEBUG:-True}
     volumes:
       - ../app:/app/app
+      - ../scripts:/app/scripts
       - ../alembic:/app/alembic
       - ../alembic.ini:/app/alembic.ini
     ports:

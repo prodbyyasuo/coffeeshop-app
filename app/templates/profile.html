@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Coffee Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+    <main class="mx-auto max-w-3xl px-4 py-8">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Profile</h1>
+            <form method="post" action="/logout">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100">Logout</button>
+            </form>
+        </div>
+        <section class="rounded-2xl bg-white p-6 shadow-sm">
+            <dl class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <dt class="text-sm text-gray-500">Email</dt>
+                    <dd class="font-medium">{{ user.email }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">Username</dt>
+                    <dd class="font-medium">{{ user.username }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">Role</dt>
+                    <dd class="font-medium">{{ user.role.value }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">First name</dt>
+                    <dd class="font-medium">{{ user.first_name or "-" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">Last name</dt>
+                    <dd class="font-medium">{{ user.last_name or "-" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">Phone</dt>
+                    <dd class="font-medium">{{ user.phone or "-" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">Status</dt>
+                    <dd class="font-medium">{{ "active" if user.is_active else "inactive" }}</dd>
+                </div>
+            </dl>
+        </section>
+        <div class="mt-6 flex gap-3">
+            <a href="/orders" class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black">My orders</a>
+            {% if user.role.value == "admin" %}
+            <a href="/admin" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100">Admin panel</a>
+            {% endif %}
+            <a href="/" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100">Back to catalog</a>
+        </div>
+    </main>
+</body>
+</html>

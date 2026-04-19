@@ -7,37 +7,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <div class="max-w-7xl mx-auto p-6">
-        <div class="flex items-center justify-between mb-6">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">Products</h1>
             <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Category</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Sizes</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for product in products %}
-                    <tr>
-                        <td class="px-4 py-3">{{ product.name }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ product.category.name if product.category else "-" }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ product.sizes|length }}</td>
-                        <td class="px-4 py-3">{{ "available" if product.is_available else "hidden" }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">No products</td>
-                    </tr>
+        <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="font-semibold mb-3">Create product</h2>
+            <p class="mb-3 text-xs text-gray-500">Slug is generated automatically from product name.</p>
+            <form method="post" action="/admin/products/create" class="grid grid-cols-1 md:grid-cols-8 gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <select name="category_id" required class="md:col-span-2 border rounded px-3 py-2">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
                     {% endfor %}
-                </tbody>
-            </table>
+                </select>
+                <input name="name" placeholder="Name" required class="md:col-span-2 border rounded px-3 py-2">
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_available" checked> available</label>
+                <input name="image_url" placeholder="Image URL" class="md:col-span-2 border rounded px-3 py-2">
+                <input name="description" placeholder="Description" required class="md:col-span-4 border rounded px-3 py-2">
+                <input name="size_small_price" type="number" step="0.01" min="0.01" placeholder="Small price" class="border rounded px-3 py-2">
+                <input name="size_medium_price" type="number" step="0.01" min="0.01" placeholder="Medium price" class="border rounded px-3 py-2">
+                <input name="size_large_price" type="number" step="0.01" min="0.01" placeholder="Large price" class="border rounded px-3 py-2">
+                <button class="md:col-span-8 justify-self-start px-4 py-2 bg-black text-white rounded">Create</button>
+            </form>
+        </div>
+
+        <div class="space-y-3">
+            {% for product in products %}
+            <form method="post" action="/admin/products/{{ product.id }}/update" class="bg-white rounded-xl shadow p-4 grid grid-cols-1 md:grid-cols-9 gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <select name="category_id" required class="md:col-span-2 border rounded px-3 py-2">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <input name="name" value="{{ product.name }}" required class="md:col-span-2 border rounded px-3 py-2">
+                <div class="md:col-span-2 text-xs text-gray-500 self-center">slug: {{ product.slug }}</div>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_available" {% if product.is_available %}checked{% endif %}> available</label>
+                <input name="image_url" value="{{ product.image_url or '' }}" class="md:col-span-2 border rounded px-3 py-2">
+                <input name="description" value="{{ product.description }}" required class="md:col-span-5 border rounded px-3 py-2">
+                <div class="md:col-span-2 text-sm text-gray-600 self-center">sizes: {{ product.sizes|length }} (edit prices in Sizes)</div>
+                <div class="md:col-span-2 flex gap-2">
+                    <button class="px-3 py-2 bg-black text-white rounded">Save</button>
+                    <button formaction="/admin/products/{{ product.id }}/delete" formmethod="post" onclick="return confirm('Delete product?')" class="px-3 py-2 bg-red-600 text-white rounded">Delete</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">No products</div>
+            {% endfor %}
         </div>
     </div>
 </body>

@@ -7,39 +7,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <div class="max-w-7xl mx-auto p-6">
-        <div class="flex items-center justify-between mb-6">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">Orders</h1>
             <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Customer</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Ready</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Total</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for order in orders %}
-                    <tr>
-                        <td class="px-4 py-3">#{{ order.id }}</td>
-                        <td class="px-4 py-3">{{ order.customer_name }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ order.ready_time }}</td>
-                        <td class="px-4 py-3 text-gray-600">${{ "%.2f"|format(order.total_amount) }}</td>
-                        <td class="px-4 py-3">{{ order.status }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">No orders</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="space-y-3">
+            {% for order in orders %}
+            <div class="bg-white rounded-xl shadow p-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div>
+                        <p class="font-semibold">#{{ order.id }} - {{ order.customer_name }}</p>
+                        <p class="text-sm text-gray-600">Ready: {{ order.ready_time }} | Total: ${{ "%.2f"|format(order.total_amount) }}</p>
+                    </div>
+                    <div class="text-sm text-gray-600">Current: <span class="font-medium">{{ order.status }}</span></div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <form method="post" action="/admin/orders/{{ order.id }}/status" class="flex items-center gap-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <select name="status_value" class="border rounded px-3 py-2 text-sm">
+                            {% for st in order_statuses %}
+                            <option value="{{ st }}" {% if order.status == st %}selected{% endif %}>{{ st }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="px-3 py-2 bg-black text-white rounded text-sm">Update status</button>
+                    </form>
+                    <form method="post" action="/admin/orders/{{ order.id }}/cancel">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button onclick="return confirm('Cancel order?')" class="px-3 py-2 bg-red-600 text-white rounded text-sm">Cancel</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">No orders</div>
+            {% endfor %}
         </div>
     </div>
 </body>

@@ -7,37 +7,47 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <div class="max-w-7xl mx-auto p-6">
-        <div class="flex items-center justify-between mb-6">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">Users</h1>
             <a href="/admin" class="px-4 py-2 bg-black text-white rounded-lg">Back</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Email</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Username</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Role</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for user in users %}
-                    <tr>
-                        <td class="px-4 py-3">{{ user.email }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ user.username }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ user.role.value }}</td>
-                        <td class="px-4 py-3">{{ "active" if user.is_active else "inactive" }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">No users</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="space-y-3">
+            {% for user in users %}
+            <div class="bg-white rounded-xl shadow p-4">
+                <div class="mb-3">
+                    <p class="font-semibold">{{ user.email }}</p>
+                    <p class="text-sm text-gray-600">{{ user.username }} | role: {{ user.role.value }} | {{ "active" if user.is_active else "inactive" }}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <form method="post" action="/admin/users/{{ user.id }}/role" class="flex items-center gap-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <select name="role" class="border rounded px-3 py-2 text-sm">
+                            <option value="customer" {% if user.role.value == "customer" %}selected{% endif %}>customer</option>
+                            <option value="admin" {% if user.role.value == "admin" %}selected{% endif %}>admin</option>
+                        </select>
+                        <button class="px-3 py-2 bg-black text-white rounded text-sm">Save role</button>
+                    </form>
+
+                    <form method="post" action="/admin/users/{{ user.id }}/status" class="flex items-center gap-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <label class="flex items-center gap-2 text-sm border rounded px-3 py-2">
+                            <input type="checkbox" name="is_active" {% if user.is_active %}checked{% endif %}>
+                            active
+                        </label>
+                        <button class="px-3 py-2 bg-black text-white rounded text-sm">Save status</button>
+                    </form>
+
+                    <form method="post" action="/admin/users/{{ user.id }}/delete">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button onclick="return confirm('Delete user?')" class="px-3 py-2 bg-red-600 text-white rounded text-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">No users</div>
+            {% endfor %}
         </div>
     </div>
 </body>
